@@ -16,7 +16,7 @@ Update later with `/plugin marketplace update rentahuman-skills`.
 ### What you get
 
 - **Skills** under `skills/` — auto-loaded by Claude Code when relevant.
-- **[`rentahuman-mcp`](https://www.npmjs.com/package/rentahuman-mcp) MCP server** — auto-wired via `npx -y rentahuman-mcp` so you always run the latest published version. Gives the model tools to browse humans, book services, post bounties, and manage rentals on [rentahuman.ai](https://rentahuman.ai).
+- **[`rentahuman-mcp`](https://www.npmjs.com/package/rentahuman-mcp) MCP server** — auto-wired via `npx -y rentahuman-mcp@latest` so every Claude Code startup pulls the latest published version from npm. Gives the model tools to browse humans, book services, post bounties, and manage rentals on [rentahuman.ai](https://rentahuman.ai).
 
 ### Configuring the MCP server
 

@@ -13,7 +13,7 @@
   "mcpServers": {
     "rentahuman": {
       "command": "npx",
-      "args": ["-y", "rentahuman-mcp"]
+      "args": ["-y", "rentahuman-mcp@latest"]
     }
   }
 }
