@@ -1,0 +1,13 @@
+{
+  "name": "rentahuman-skills",
+  "description": "Bundle of Claude Code skills Rent A Human maintains for agents and contributors",
+  "version": "0.1.0",
+  "author": {
+    "name": "Rent A Human",
+    "email": "team@rentahuman.ai"
+  },
+  "homepage": "https://github.com/rentahuman-ai/skills",
+  "repository": "https://github.com/rentahuman-ai/skills",
+  "license": "MIT",
+  "keywords": ["rentahuman", "skills", "claude-code"]
+}

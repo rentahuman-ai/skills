@@ -1,17 +1,49 @@
 # Rent A Human — Claude Skills
 
-Shared [Claude Code skills](https://docs.claude.com/en/docs/claude-code/skills) used across Rent A Human projects.
+Public [Claude Code skills](https://docs.claude.com/en/docs/claude-code/skills) maintained by [Rent A Human](https://rentahuman.ai). Packaged as a [Claude Code plugin marketplace](https://docs.claude.com/en/docs/claude-code/plugin-marketplaces) so agents and contributors can install the full collection with one command.
 
-Each top-level directory is a skill. A skill is auto-loaded by Claude Code when its `description` matches what you're doing — the model decides when to read the body.
+## Install as a plugin marketplace (recommended)
+
+Inside Claude Code:
+
+```
+/plugin marketplace add rentahuman-ai/skills
+/plugin install rentahuman-skills@rentahuman-skills
+```
+
+Update later with `/plugin marketplace update rentahuman-skills`.
+
+## Use as a git submodule
+
+For projects that want to vendor the skills alongside source (e.g. the [rentahuman.ai](https://github.com/rentahuman-ai) monorepo):
+
+```bash
+git submodule add https://github.com/rentahuman-ai/skills rentahuman-skills
+git submodule update --init
+```
+
+Bump to latest:
+
+```bash
+git submodule update --remote rentahuman-skills
+git add rentahuman-skills
+git commit -m "chore: bump rentahuman-skills submodule"
+```
 
 ## Layout
 
 ```
-<skill-name>/
-  SKILL.md           # required — YAML frontmatter + instructions
-  references/*.md    # optional — longer context the skill links to
-  scripts/           # optional — helper scripts invoked from the skill
+.claude-plugin/
+  marketplace.json    # marketplace catalog
+  plugin.json         # plugin manifest
+skills/
+  <skill-name>/
+    SKILL.md          # required — YAML frontmatter + instructions
+    references/*.md   # optional — longer context the skill links to
+    scripts/          # optional — helper scripts invoked from the skill
 ```
+
+Each directory under `skills/` is a standalone skill that Claude Code auto-loads when its `description` matches what you're doing.
 
 `SKILL.md` frontmatter:
 
@@ -22,39 +54,13 @@ description: One sentence on when Claude should use this. Specific triggers beat
 ---
 ```
 
-## Using this repo
-
-### As a git submodule (recommended for Rent A Human projects)
-
-```bash
-git submodule add https://github.com/rentahuman-ai/skills .agents/skills
-git submodule update --init
-```
-
-Then symlink or copy each skill into the project's `.claude/skills/` so Claude Code picks them up:
-
-```bash
-for dir in .agents/skills/*/; do
-  name=$(basename "$dir")
-  ln -sf "../../.agents/skills/$name" ".claude/skills/$name"
-done
-```
-
-### Updating
-
-```bash
-git submodule update --remote .agents/skills
-git add .agents/skills
-git commit -m "chore: bump skills submodule"
-```
-
 ## Adding or editing skills
 
-1. Create `<skill-name>/SKILL.md` with frontmatter (`name`, `description`).
+1. Create `skills/<skill-name>/SKILL.md` with frontmatter (`name`, `description`).
 2. Keep the body focused — link out to `references/*.md` for anything long.
-3. Open a PR here. Downstream projects pick it up via `git submodule update --remote`.
+3. Open a PR. Downstream consumers pick it up via `/plugin marketplace update` or `git submodule update --remote`.
 
 ## Spec
 
 - [Skill spec](https://docs.claude.com/en/docs/claude-code/skills)
-- [Plugin packaging](https://docs.claude.com/en/docs/claude-code/plugins) (if later distributed via a plugin marketplace)
+- [Plugin marketplace spec](https://docs.claude.com/en/docs/claude-code/plugin-marketplaces)
