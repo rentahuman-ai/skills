@@ -6,14 +6,13 @@
   },
   "metadata": {
     "description": "Public Claude Code skills curated by Rent A Human",
-    "version": "0.1.0"
+    "version": "0.2.0"
   },
   "plugins": [
     {
       "name": "rentahuman-skills",
       "source": "./",
       "description": "Bundle of Claude Code skills Rent A Human maintains for agents and contributors",
-      "version": "0.1.0",
       "author": {
         "name": "Rent A Human",
         "email": "team@rentahuman.ai"

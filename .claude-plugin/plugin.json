@@ -1,7 +1,7 @@
 {
   "name": "rentahuman-skills",
   "description": "Bundle of Claude Code skills Rent A Human maintains for agents and contributors",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": {
     "name": "Rent A Human",
     "email": "team@rentahuman.ai"
