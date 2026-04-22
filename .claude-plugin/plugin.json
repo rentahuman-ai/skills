@@ -9,5 +9,11 @@
   "homepage": "https://github.com/rentahuman-ai/skills",
   "repository": "https://github.com/rentahuman-ai/skills",
   "license": "MIT",
-  "keywords": ["rentahuman", "skills", "claude-code"]
+  "keywords": ["rentahuman", "skills", "claude-code"],
+  "mcpServers": {
+    "rentahuman": {
+      "command": "npx",
+      "args": ["-y", "rentahuman-mcp"]
+    }
+  }
 }

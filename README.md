@@ -13,6 +13,25 @@ Inside Claude Code:
 
 Update later with `/plugin marketplace update rentahuman-skills`.
 
+### What you get
+
+- **Skills** under `skills/` — auto-loaded by Claude Code when relevant.
+- **[`rentahuman-mcp`](https://www.npmjs.com/package/rentahuman-mcp) MCP server** — auto-wired via `npx -y rentahuman-mcp` so you always run the latest published version. Gives the model tools to browse humans, book services, post bounties, and manage rentals on [rentahuman.ai](https://rentahuman.ai).
+
+### Configuring the MCP server
+
+Most read-only tools work anonymously. To book, rent, or post bounties you need an API key — get one at [rentahuman.ai/dashboard/api-keys](https://rentahuman.ai/dashboard/api-keys) and export it before starting Claude Code:
+
+```bash
+export RENTAHUMAN_API_KEY=rah_...
+```
+
+Optional — point at a non-prod API (dev/staging):
+
+```bash
+export RENTAHUMAN_API_URL=http://localhost:3000/api
+```
+
 ## Use as a git submodule
 
 For projects that want to vendor the skills alongside source (e.g. the [rentahuman.ai](https://github.com/rentahuman-ai) monorepo):
