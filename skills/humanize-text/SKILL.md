@@ -1,6 +1,6 @@
 ---
 name: humanize-text
-description: Hire a Rent A Human worker to rewrite private text without generative AI, with a final DOCX/TXT, continuous screen recording, and separate advisory Copyleaks and Pangram results. Trigger when the user asks for a human rewrite, human editing, proof-of-human writing evidence, or the RentAHuman humanization API.
+description: Hire a Rent A Human worker to rewrite private text without generative AI, with a final DOCX/TXT, continuous screen recording, and advisory Pangram results. Trigger when the user asks for a human rewrite, human editing, proof-of-human writing evidence, or the RentAHuman humanization API.
 ---
 
 # Humanize Text
@@ -10,9 +10,8 @@ person to rewrite text without generative AI. The source stays private until a
 worker is accepted. The worker must attest to no AI use and submit both a final
 DOCX or UTF-8 TXT document and a continuous MP4, MOV, or WebM screen recording.
 
-Copyleaks and Pangram are independent advisory signals. They do not prove who
-wrote the text, must not be averaged, and never authorize an automatic
-approval, rejection, redo, or payment release.
+Pangram is an advisory signal. It does not prove who wrote the text and never
+authorizes an automatic approval, rejection, redo, or payment release.
 
 ## Before spending
 
@@ -41,8 +40,8 @@ When screening is enabled, generate the representative sample yourself and
 provide enough words for the requested calculated size. Do not copy the
 requester's private source into the sample. Each applicant must humanize the
 sample with the same no-AI attestation, document, continuous screen recording,
-and separate Copyleaks/Pangram analysis before they can be accepted. Treat
-resume contents as private application evidence.
+and advisory Pangram analysis before they can be accepted. Treat resume
+contents as private application evidence.
 
 The account pays worker pay plus the platform fee: 18% of worker pay, rounded
 to the nearest cent. Confirm that total and receive clear spending
@@ -69,11 +68,11 @@ Prefer the `rentahuman-mcp` tools when available.
    near a short deadline).
 5. Report assignment changes, the exact worker deadline, expired/reopened
    attempts, applicant screening results, and submitted document/video links.
-   If screening is configured, present every applicant's sample and the two
-   detector results separately before asking the requester whom to accept.
+   If screening is configured, present every applicant's sample and Pangram
+   result before asking the requester whom to accept.
 6. When analysis is terminal (`complete`, `partial`, or `unavailable`), present
-   Copyleaks and Pangram separately, including each provider's status and model
-   version. Explicitly call out disagreement or provider unavailability.
+   Pangram's classification, fractions, status, and model version. Explicitly
+   call out detector unavailability.
 7. Ask the requester to review the document, recording, attestation, and
    detector evidence. Use the existing submission-review tool only after their
    decision to approve, request a redo, or reject.
