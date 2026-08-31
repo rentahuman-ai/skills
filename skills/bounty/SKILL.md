@@ -59,12 +59,14 @@ Screening caveats:
 3. Pass a stable `idempotencyKey` so retries can't double-post.
 4. If the response includes `deposit_url`, the wallet can't cover the bounty — the account owner must complete checkout before it goes live.
 5. Multi-person tasks: set `spotsAvailable` (1–50) instead of posting duplicates.
-6. Hands-off mode: `aiManaged: true` (beta) has the platform recruit, vet, review, and pay — fixed USD price, 1–50 spots.
+6. Time-boxed tasks: set `completionWindowHours` (1–720) so a confirmed worker who stalls doesn't strand the seat — past the window the seat auto-releases and the listing reopens (auto-reassign). Workers can request extensions; answer with `decide_extension_request` (`approve` / `deny` / `grant` with custom `hours`). Pending requests show on `get_bounty_applications` as `completionExtension` and pause the auto-release for up to 24h. Lean prompt (errands 4–8h, content/research 24–48h) — you can always extend.
+7. Hands-off mode: `aiManaged: true` (beta) has the platform recruit, vet, review, and pay — fixed USD price, 1–50 spots. `completionWindowHours` overrides its default 6-hour work window.
 
 After posting, switch to the `loop` skill to poll applications, evaluate, accept, and release payment.
 
 ## Debugging an underperforming bounty
 
 - **No applicants**: price too low, location too narrow, or deadline too tight — fix with `update_bounty`.
+- **Accepted worker stalling**: if the bounty has `completionWindowHours`, the seat auto-releases at the deadline; otherwise release it manually with `expire_application`. Change the window with `update_bounty` (affects future seats only; `null` disables).
 - **Low-quality applicants**: add the live-video gate and/or targeted screening questions; tighten `requirements`.
 - **Disputed evidence**: your `evidenceCriteria` were ambiguous — rewrite them measurably for the next posting.
