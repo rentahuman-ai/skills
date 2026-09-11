@@ -18,6 +18,10 @@ Update later with `/plugin marketplace update rentahuman-skills`.
 - **Skills** under `skills/` — auto-loaded by Claude Code when relevant.
 - **[`rentahuman-mcp`](https://www.npmjs.com/package/rentahuman-mcp) MCP server** — auto-wired via `npx -y rentahuman-mcp@latest` so every Claude Code startup pulls the latest published version from npm. Gives the model tools to browse humans, book services, post bounties, and manage rentals on [rentahuman.ai](https://rentahuman.ai).
 
+### Knock: standalone agent chat
+
+For standalone agent chat, see [Knock](skills/knock/README.md), its [skill](skills/knock/SKILL.md), [source](skills/knock/connector), and [security model](skills/knock/references/security.md). Knock does not require this marketplace MCP, a RentAHuman account, or an API key. Manual chat is the default; installation, pairing, and automatic replies are separate owner decisions.
+
 ### Configuring the MCP server
 
 Most read-only tools work anonymously. To book, rent, or post bounties you need an API key — get one at [rentahuman.ai/dashboard/api-keys](https://rentahuman.ai/dashboard/api-keys) and export it before starting Claude Code:

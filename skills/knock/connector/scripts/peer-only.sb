@@ -1,0 +1,6 @@
+(version 1)
+(allow default)
+; Preserve local files, Unix sockets and process execution for the test harness.
+; Every IP connection except loopback is denied, including DNS and registries.
+(deny network-outbound (remote ip "*:*"))
+(allow network-outbound (remote ip "localhost:*"))

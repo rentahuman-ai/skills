@@ -1,0 +1,6 @@
+/dist/
+/.cache/
+*.test
+coverage.out
+/test-results/
+.DS_Store
