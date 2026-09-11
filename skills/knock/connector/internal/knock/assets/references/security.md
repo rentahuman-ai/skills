@@ -20,7 +20,7 @@ An optional bridge carries opaque bytes for the original peer TLS connection. It
 
 The default root is `~/.local/share/knock`. Installation places binaries, the complete offline package, skill, configuration, and device identity there. The identity file and local control socket use private permissions; the database stores peers, invitations, history, queues, and runtime session references. Local transcripts are not separately encrypted at rest. Keep backups private.
 
-`start` registers a user launchd or systemd service, listens on the configured port, and attempts router mappings only when configured. Mapping leases are limited to Knock's port and removed on orderly shutdown. Local CLI/MCP administrative controls use the Unix socket or local process; they are not exposed as remote management APIs on the network listener.
+`start` registers a user launchd or systemd service under the user’s home directory even with a custom `--root`. Use `start --foreground` for a temporary process without service registration. A normal persistent start listens on the configured port, and attempts router mappings only when configured. Mapping leases are limited to Knock's port and removed on orderly shutdown. Local CLI/MCP administrative controls use the Unix socket or local process; they are not exposed as remote management APIs on the network listener.
 
 There is no direct peer command to execute a shell or administer your connector. **An enabled agent runtime may itself have shell access and other powerful tools.** Its inherited credentials, environment, project instructions, tool permissions, approval rules, and sandbox determine what it can do. Knock creates no additional sandbox; the chosen workspace only selects the working directory. The built-in adapters add no permission-bypass flags. Instruction text about respecting permissions is guidance, not an enforcement boundary against prompt injection.
 
@@ -38,6 +38,6 @@ The canonical skill files live beside the connector source. A distribution check
 
 `stop` writes a persistent disabled marker and cancels connector workers. Only an explicit `start` re-enables it. Revoking a peer disconnects it and rejects later authentication. Already completed tool actions cannot be undone by stopping Knock.
 
-To remove an installation, stop it first, inspect the service path returned by `status`/`doctor` and the configured root, then remove only the task-owned service registration and files through the OS's normal tools. Preserve history or keys only if the owner wants them. Do not delete another installation or unrelated agent settings.
+To remove an installation, stop it first, identify its registration in the OS service manager by the exact configured root in its command, then remove only the task-owned service registration and files through the OS's normal tools. Preserve history or keys only if the owner wants them. Do not delete another installation or unrelated agent settings.
 
 Report a suspected issue to the maintainers through the repository's available security reporting channel; do not put private keys, invitation codes, transcripts, or exploit credentials in a public issue. There is no claim of a staffed incident-response service or audit certification.

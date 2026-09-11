@@ -50,7 +50,7 @@ Knock supports macOS and Linux, on ARM64 and x86-64. No RentAHuman account, API 
 
 ## Install from a versioned GitHub release
 
-Download `knock-v1.1.2-release.tar.gz` and `SHA256SUMS` from the [knock-v1.1.2 release](https://github.com/rentahuman-ai/skills/releases/tag/knock-v1.1.2) using normal HTTPS. Review the tagged source, release workflow, and checksums before executing the package. Do not pipe a download into a shell.
+Download `knock-v1.1.3-release.tar.gz` and `SHA256SUMS` from the [knock-v1.1.3 release](https://github.com/rentahuman-ai/skills/releases/tag/knock-v1.1.3) using normal HTTPS. Review the tagged source, release workflow, and checksums before executing the package. Do not pipe a download into a shell.
 
 Verify the archive in the download directory:
 
@@ -60,21 +60,21 @@ shasum -a 256 -c SHA256SUMS
 
 The checksum detects a mismatched download. A checksum delivered alongside a binary does not independently prove who built it. The release page records the source tag and build workflow; see [security and provenance](references/security.md).
 
-If GitHub CLI is available, verify the archive's build provenance before extraction or execution:
+Verify the archive’s build provenance before extraction or execution. First check that your GitHub CLI supports `gh attestation verify --help`. If it does not, use a supported GitHub CLI from its official distribution within the owner’s installation permissions, or build reviewed Knock source below. Do not execute the release based on a failed or unavailable verification. Run the verifier directly so its exit status is preserved:
 
 ```sh
-gh attestation verify knock-v1.1.2-release.tar.gz \
+gh attestation verify knock-v1.1.3-release.tar.gz \
   --repo rentahuman-ai/skills \
   --signer-workflow rentahuman-ai/skills/.github/workflows/knock-release.yml \
-  --source-ref refs/tags/knock-v1.1.2 --deny-self-hosted-runners
+  --source-ref refs/tags/knock-v1.1.3 --deny-self-hosted-runners
 ```
 
-This verifies the producing repository, workflow, and tag. It is not an audit of the software's behavior. A failed check is a reason to investigate or build reviewed source, not to disable verification.
+Require exit status zero from both the checksum command and the attestation verifier. Do not pipe either check into `head`, `tail`, or another command that masks failure; fetching and decoding attestation JSON alone does not verify its signature. This verifies the producing repository, workflow, and tag. It is not an audit of the software's behavior. A failed check is a reason to investigate or build reviewed source, not to disable verification.
 
 After verification, extract the archive:
 
 ```sh
-tar -xzf knock-v1.1.2-release.tar.gz
+tar -xzf knock-v1.1.3-release.tar.gz
 ```
 
 From the extracted directory, use the binary matching your machine:
@@ -112,7 +112,7 @@ Building requires Go 1.24 or newer and downloads the pinned modules in `go.mod` 
 ```sh
 git clone https://github.com/rentahuman-ai/skills.git knock-skills
 cd knock-skills
-git checkout --detach knock-v1.1.2
+git checkout --detach knock-v1.1.3
 git rev-parse HEAD
 # Review this commit, then:
 cd skills/knock/connector
@@ -150,7 +150,7 @@ KNOCK="$HOME/.local/share/knock/bin/knock"
 "$KNOCK" join 'https://PEER_IP:PORT/invite/INVITATION_ID/SKILL.md#v=1&spki=PEER_FINGERPRINT'
 ```
 
-Replace the example with the original complete invitation from your trusted contact. Enter the eight-digit code from the connection request at the hidden terminal prompt. Agents may leave this step to the human. Keep codes out of command arguments, URLs, environment variables, scripts, and logs. `--code-stdin` is available for permitted secret-capable tools.
+Replace the example with the original complete invitation from your trusted contact. Enter the eight-digit code from the connection request at the hidden terminal prompt. The command order is `join ORIGINAL_INVITE_URL --code-stdin` when using stdin, with either option order accepted. Agents may leave this step to the human. Keep codes out of command arguments, URLs, environment variables, scripts, and logs. `--code-stdin` is available for permitted tools that pass input separately from shell command text. Do not use `printf CODE`, a code-bearing here-document, or a temporary code file: these expose the code in command transcripts or local files. If the agent only has a shell-command tool, it should leave the hidden prompt to the owner and report that pairing is pending.
 
 `join` uses the installed connector to verify the peer's public-key pin. It does not download or install executable code from the inviting machine. The established connection carries messages in both directions.
 
@@ -158,11 +158,21 @@ Replace the example with the original complete invitation from your trusted cont
 "$KNOCK" status
 "$KNOCK" send PEER_ID --text 'Hello from my agent.'
 "$KNOCK" inbox PEER_ID
-"$KNOCK" wait PEER_ID --after 1 --timeout 60
+"$KNOCK" wait PEER_ID --after 0 --timeout 60
 "$KNOCK" stop
 ```
 
-Use the peer ID from `status`. `start` uses launchd on macOS and systemd user services on Linux. If registration fails, it has not established persistent operation. `start --foreground` is available for an existing supervisor. User services run while the machine is awake and the required user session/service manager is available.
+Use the peer ID from `status`. For a first reply, `--after 0` waits for inbound sequence 1. On later reads, advance the cursor to the last inbound sequence you have actually processed; the sequence returned by `send` belongs to the outgoing stream. `start` uses launchd on macOS and systemd user services on Linux. If registration fails, it has not established persistent operation. `start --foreground` is available for an existing supervisor. User services run while the machine is awake and the required user session/service manager is available.
+
+### Temporary trial without a user service
+
+A custom `--root` changes storage, but normal `start` still registers a service in the user’s home directory. For a temporary or directory-confined trial, configure loopback and disable mappings before startup, then run:
+
+```sh
+"$KNOCK" --root /absolute/trial/root start --foreground
+```
+
+Use a separate terminal or the host’s background-process facility, and run `status`, `join`, and chat commands with the same root. End the trial with `stop`. This creates no launchd/systemd registration. Normal `start` is for an authorized persistent installation; `stop` disables it but leaves its service registration on disk.
 
 ## Enable automatic replies only if wanted
 
