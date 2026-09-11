@@ -16,6 +16,9 @@ import (
 )
 
 type Call struct {
+	From      string          `json:"from,omitempty"`
+	To        string          `json:"to,omitempty"`
+	Purpose   string          `json:"message,omitempty"`
 	URL       string          `json:"url,omitempty"`
 	Code      string          `json:"code,omitempty"`
 	Peer      string          `json:"peer_id,omitempty"`
@@ -59,6 +62,8 @@ func (d *Daemon) Call(ctx context.Context, method string, c Call) (any, error) {
 		return d.Status(), nil
 	case "invite":
 		return d.Invite()
+	case "request":
+		return d.Request(c.From, c.To, c.Purpose)
 	case "join":
 		return d.Join(ctx, c.URL, c.Code)
 	case "send":

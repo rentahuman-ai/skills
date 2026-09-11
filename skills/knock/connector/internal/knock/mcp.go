@@ -20,7 +20,7 @@ func MCP(ctx context.Context, root string, in io.Reader, out io.Writer) error {
 	scan.Buffer(make([]byte, 4096), MaxMessageBytes+16384)
 	enc := json.NewEncoder(out)
 	props := map[string]any{"peer_id": map[string]string{"type": "string"}, "url": map[string]string{"type": "string"}, "code": map[string]string{"type": "string", "description": "One-time pairing code; omit from logs and user-visible arguments where the host cannot protect secrets."}, "content": map[string]any{}, "reply_to": map[string]string{"type": "string"}, "after": map[string]string{"type": "integer"}, "limit": map[string]string{"type": "integer"}, "timeout_seconds": map[string]string{"type": "integer"}, "direction": map[string]string{"type": "string"}, "next_wake_at": map[string]string{"type": "string"}}
-	methods := map[string]string{"invite": "Create an invitation. The returned code is sensitive; present separately to the owner.", "send": "Send text or JSON to a paired peer.", "inbox": "Read incoming or outgoing messages with a sequence cursor.", "wait": "Wait up to 60 seconds for new messages.", "status": "Read connector and runtime status.", "doctor": "Inspect networking and runtime configuration.", "stop": "Persistently stop the connector and its workers.", "revoke": "Revoke a peer's access.", "schedule": "Schedule the agent's next wakeup.", "refresh": "Update a paired peer endpoint without changing its identity."}
+	methods := map[string]string{"request": "Create a formatted private connection request containing setup links, invitation, code, and expiry. Return it to the owner; do not send it to someone else without authorization.", "invite": "Create an invitation. The returned code is sensitive; include it with the link in the owner's private connection request.", "send": "Send text or JSON to a paired peer.", "inbox": "Read incoming or outgoing messages with a sequence cursor.", "wait": "Wait up to 60 seconds for new messages.", "status": "Read connector and runtime status.", "doctor": "Inspect networking and runtime configuration.", "stop": "Persistently stop the connector and its workers.", "revoke": "Revoke a peer's access.", "schedule": "Schedule the agent's next wakeup.", "refresh": "Update a paired peer endpoint without changing its identity."}
 	for scan.Scan() {
 		var req rpcRequest
 		if e := json.Unmarshal(scan.Bytes(), &req); e != nil {
@@ -54,7 +54,11 @@ func MCP(ctx context.Context, root string, in io.Reader, out io.Writer) error {
 				case "refresh":
 					required = []string{"url"}
 				}
-				tools = append(tools, map[string]any{"name": "knock_" + method, "description": desc, "inputSchema": map[string]any{"type": "object", "properties": props, "required": required, "additionalProperties": false}})
+				toolProps := props
+				if method == "request" {
+					toolProps = map[string]any{"from": map[string]string{"type": "string"}, "to": map[string]string{"type": "string"}, "message": map[string]string{"type": "string"}}
+				}
+				tools = append(tools, map[string]any{"name": "knock_" + method, "description": desc, "inputSchema": map[string]any{"type": "object", "properties": toolProps, "required": required, "additionalProperties": false}})
 			}
 			result = map[string]any{"tools": tools}
 		case "tools/call":
@@ -78,6 +82,12 @@ func MCP(ctx context.Context, root string, in io.Reader, out io.Writer) error {
 			}
 			data, e := Control(ctx, root, method, p.Arguments)
 			content := string(data)
+			if e == nil && method == "request" {
+				var request ConnectionRequest
+				if e = json.Unmarshal(data, &request); e == nil {
+					content = request.Markdown
+				}
+			}
 			if e != nil {
 				content = e.Error()
 			}

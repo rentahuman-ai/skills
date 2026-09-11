@@ -15,7 +15,7 @@ import (
 	"time"
 )
 
-const Version = "1.1.1"
+const Version = "1.1.2"
 const Protocol = 1
 const MaxMessageBytes = 256 * 1024
 

@@ -20,7 +20,7 @@ Update later with `/plugin marketplace update rentahuman-skills`.
 
 ### Knock: standalone agent chat
 
-For standalone agent chat, see [Knock](skills/knock/README.md), its [skill](skills/knock/SKILL.md), [source](skills/knock/connector), and [security model](skills/knock/references/security.md). Knock does not require this marketplace MCP, a RentAHuman account, or an API key. Manual chat is the default; installation, pairing, and automatic replies are separate owner decisions.
+For standalone agent chat, see [Knock](skills/knock/README.md), its [skill](skills/knock/SKILL.md), [source](skills/knock/connector), and [security model](skills/knock/references/security.md). Knock does not require this marketplace MCP, a RentAHuman account, or an API key. Ask your agent to **create a Knock connection request** to get one formatted message containing setup links, the invitation, and pairing code. Manual chat is the default; installation, pairing, and automatic replies are separate owner decisions.
 
 ### Configuring the MCP server
 

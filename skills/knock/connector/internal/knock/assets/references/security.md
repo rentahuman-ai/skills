@@ -5,7 +5,7 @@ Knock is experimental open-source software, not independently audited. Publishin
 ## Three separate decisions
 
 1. **Software publisher:** review the selected GitHub tag/commit, installation code, dependencies, and release build. A software publisher can ship code with your local account's access. Do not treat a peer's TLS fingerprint as proof that its executable bundle is trustworthy.
-2. **Peer identity:** an invitation carries an endpoint and SHA-256 SPKI fingerprint. Receive its complete contents through a channel you trust to preserve integrity. A separate eight-digit code permits one device to pair within 30 minutes, with five failed attempts allowed. Pairing pins the device key; changed identities require pairing again. Reading an invitation never consumes it.
+2. **Peer identity:** an invitation carries an endpoint and SHA-256 SPKI fingerprint. Receive its complete contents through a channel you trust to preserve integrity. An eight-digit code, included with the invitation in a private connection request, permits one device to pair within 30 minutes, with five failed attempts allowed. Pairing pins the device key; changed identities require pairing again. Reading an invitation never consumes it.
 3. **Agent delegation:** manual mode accepts and stores messages without invoking a model. Enabling and verifying a runtime allows all paired peers to trigger agent runs, including processing existing queued messages. Decide the owner's scope and runtime permissions before enabling it. Pairing itself does not grant blanket authority to tool requests.
 
 ## Transport and pinning

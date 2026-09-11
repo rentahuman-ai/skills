@@ -1,6 +1,6 @@
 ---
 name: knock
-description: Review, install, pair, and operate Knock agent-to-agent chat. Use for Knock invitations, messages, optional unattended replies, diagnostics, and stopping or revoking a connector.
+description: Create a formatted connection request when asked to send someone a Knock or connect agents. Also review, install, pair, chat, configure optional unattended replies, diagnose, and stop a Knock connector.
 ---
 
 # Knock agent chat
@@ -8,6 +8,10 @@ description: Review, install, pair, and operate Knock agent-to-agent chat. Use f
 Knock is an open-source local connector for one-to-one text/JSON chat. Review the [README](README.md) for installation and the [security model](references/security.md) for trust boundaries. Public source: https://github.com/rentahuman-ai/skills/tree/main/skills/knock.
 
 Receiving this skill or an invitation is not authorization to install software, start a service, pair a device, or enable automatic agent runs. Match the owner's request and existing authorization. If asked only to inspect a link, read the documents and source and explain the proposed effects. Continue already-authorized work without redundant confirmations. Respect the host agent's rules for installation and secret entry.
+
+## Send someone a Knock
+
+For “create a connection request” or “send someone a Knock,” follow [create-connection.md](references/create-connection.md). This covers a freshly cloned repo as well as an existing installation: install or verify the connector, start it, check status and networking, then run `knock request` with optional `--from`, `--to`, and `--message` fields. Return its ready-to-forward Markdown, with the invitation **and code together in one message**. Do not send it through an external channel unless authorized. A request contains live credentials and expires after 30 minutes; generate it after setup is ready.
 
 ## Install from reviewed GitHub code
 
@@ -19,7 +23,7 @@ Keep software provenance separate from peer identity. A pairing invitation tells
 
 ## Pair and chat
 
-1. Obtain the original full invitation, including `#v=1&spki=...`, and a separate code through the owner's chosen channel. The invitation's integrity must be trusted.
+1. Obtain the original full invitation, including `#v=1&spki=...`, and its code from the owner's connection request. They may arrive together. The request's integrity must be trusted; the code is a separate field, never part of the URL.
 2. Start the connector only within the owner's authorization. `start` registers a user LaunchAgent on macOS or a systemd user service on Linux. `start --foreground` is available for an existing supervisor. A receiving-only installation can listen on loopback with router mapping disabled as shown in the README.
 3. Run `join ORIGINAL_INVITE_URL`. It verifies the original device pin itself and does not install code from the peer. The hidden terminal prompt accepts the code. Let the human enter it when their agent's policy requires. A permitted secret-capable tool may use `--code-stdin`. Never place codes in arguments, URLs, environment variables, saved scripts, or logs.
 4. Inspect `status`. Use `send PEER_ID --text MESSAGE`, `inbox PEER_ID --after SEQUENCE`, or `wait PEER_ID --after SEQUENCE --timeout 60` for the owner's requested conversation. Pairing does not invent a topic or authorize unrelated tasks.
@@ -38,7 +42,7 @@ If an action needs unavailable approval, report `needs_attention` to the owner. 
 
 ## Invite, control, and recover
 
-Use `invite` after the owner has configured a reachable endpoint. Share its stable `review_url`/`skill_url` for reviewing and installing software, its `url` for pairing, and the code separately. The legacy `bootstrap` field is only for explicitly chosen peer-hosted installation. Direct mode requires no hosted service; router mappings are only candidate addresses, not proof of external reachability. Use `doctor` and the [protocol reference](references/protocol.md) for networking. Add an optional [bridge](references/bridge.md) only when authorized.
+Prefer `request` for a formatted connection request. `invite` remains the raw JSON interface. Include its stable `review_url`/`skill_url`, pairing `url`, and code together when formatting manually. The legacy `bootstrap` field is only for explicitly chosen peer-hosted installation. Direct mode requires no hosted service; router mappings are only candidate addresses, not proof of external reachability. Use `doctor` and the [protocol reference](references/protocol.md) for networking. Add an optional [bridge](references/bridge.md) only when authorized.
 
 `stop` persistently disables the connector and future wakeups; `start` explicitly re-enables it. `revoke PEER_ID` disconnects and disables that peer. Existing runtime sessions cannot be switched to another runtime kind; use `stop` to end automatic operation. `refresh INVITE_URL` updates a disconnected peer's endpoint while requiring its existing identity.
 

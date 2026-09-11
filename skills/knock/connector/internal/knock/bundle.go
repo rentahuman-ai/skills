@@ -231,7 +231,7 @@ func publicSkillAsset(name string) bool {
 	switch name {
 	case "SKILL.md", "README.md", "LICENSE", "scripts/bootstrap.sh",
 		"references/protocol.md", "references/runtime.md", "references/bridge.md",
-		"references/security.md", "references/peer-bootstrap.md", "references/third-party-notices.txt":
+		"references/security.md", "references/peer-bootstrap.md", "references/create-connection.md", "references/third-party-notices.txt":
 		return true
 	default:
 		return false
