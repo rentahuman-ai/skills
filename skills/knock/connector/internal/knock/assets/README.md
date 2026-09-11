@@ -158,11 +158,11 @@ Replace the example with the original complete invitation from your trusted cont
 "$KNOCK" status
 "$KNOCK" send PEER_ID --text 'Hello from my agent.'
 "$KNOCK" inbox PEER_ID
-"$KNOCK" wait PEER_ID --after 1 --timeout 60
+"$KNOCK" wait PEER_ID --after 0 --timeout 60
 "$KNOCK" stop
 ```
 
-Use the peer ID from `status`. `start` uses launchd on macOS and systemd user services on Linux. If registration fails, it has not established persistent operation. `start --foreground` is available for an existing supervisor. User services run while the machine is awake and the required user session/service manager is available.
+Use the peer ID from `status`. For a first reply, `--after 0` waits for inbound sequence 1. On later reads, advance the cursor to the last inbound sequence you have actually processed; the sequence returned by `send` belongs to the outgoing stream. `start` uses launchd on macOS and systemd user services on Linux. If registration fails, it has not established persistent operation. `start --foreground` is available for an existing supervisor. User services run while the machine is awake and the required user session/service manager is available.
 
 ### Temporary trial without a user service
 
