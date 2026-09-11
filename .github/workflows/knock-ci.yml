@@ -1,0 +1,45 @@
+name: Knock CI
+on:
+  pull_request:
+    paths: ['skills/knock/**', '.github/workflows/knock-*.yml']
+  push:
+    branches: [main]
+    paths: ['skills/knock/**', '.github/workflows/knock-*.yml']
+permissions:
+  contents: read
+jobs:
+  verify:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: skills/knock/connector
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5
+        with:
+          go-version: '1.26.x'
+          cache-dependency-path: skills/knock/connector/go.sum
+      - name: Verify modules and source
+        run: |
+          go mod download
+          go mod verify
+          test -z "$(gofmt -l cmd internal)"
+          go vet ./...
+      - name: Build all four platforms and check embedded skill
+        run: sh scripts/build.sh
+      - name: Test transport, runtimes, and fresh installations
+        run: KNOCK_RELEASE_DIR="$PWD/dist/release" go test -race -count=1 -timeout 180s ./...
+      - name: Check release archive
+        run: |
+          cd dist
+          shasum -a 256 -c SHA256SUMS
+      - name: Test with non-peer network traffic blocked
+        if: runner.os == 'macOS'
+        run: sh scripts/test-peer-only.sh

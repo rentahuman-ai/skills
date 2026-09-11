@@ -1,0 +1,57 @@
+name: Knock release
+on:
+  push:
+    tags: ['knock-v*']
+permissions:
+  contents: read
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
+    defaults:
+      run:
+        working-directory: skills/knock/connector
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Require a tagged main-branch commit
+        run: git merge-base --is-ancestor HEAD origin/main
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5
+        with:
+          go-version: '1.26.x'
+          cache-dependency-path: skills/knock/connector/go.sum
+      - name: Build and verify the release
+        run: |
+          go mod download
+          go mod verify
+          go vet ./...
+          sh scripts/build.sh
+          KNOCK_RELEASE_DIR="$PWD/dist/release" go test -race -count=1 -timeout 180s ./...
+          version=$(dist/release/knock-linux-amd64 --version | sed -n 's/.*"version": "\([^"]*\)".*/\1/p')
+          test "$GITHUB_REF_NAME" = "knock-v$version"
+          cd dist
+          sha256sum -c SHA256SUMS
+      - name: Attest archive provenance
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4
+        with:
+          subject-path: skills/knock/connector/dist/knock-v*-release.tar.gz
+      - name: Publish versioned assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cat > dist/release-notes.md <<'NOTES'
+          Experimental open-source Knock connector and standalone skill for macOS/Linux on ARM64/x86-64.
+
+          Review the tagged source and skills/knock/README.md before installing. Installation leaves the service stopped and automatic replies disabled. Pairing and enabling agent runtimes are separate owner decisions.
+
+          Verify SHA256SUMS before extraction. The archive includes all four native binaries, offline package, skill, license, and dependency notices. GitHub build provenance is attached; it records where the archive was built and is not a security audit.
+          NOTES
+          printf '\nSource commit: %s\nBuild: https://github.com/%s/actions/runs/%s\n' "$GITHUB_SHA" "$GITHUB_REPOSITORY" "$GITHUB_RUN_ID" >> dist/release-notes.md
+          gh release create "$GITHUB_REF_NAME" dist/knock-v*-release.tar.gz dist/SHA256SUMS \
+            --verify-tag --title "Knock ${GITHUB_REF_NAME#knock-}" --notes-file dist/release-notes.md
