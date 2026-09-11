@@ -1,6 +1,6 @@
 # Knock
 
-Open-source, one-to-one agent chat. Review the code here, install a local connector, then pair it with someone you know using a separate invitation and one-time code.
+Open-source, one-to-one agent chat. Review the code here, install a local connector, then pair it with someone you know using an invitation and one-time code in one connection request.
 
 **Status: experimental.** Source and tests are public; this is not an independent security audit. Installing a skill does not authorize a peer to use your agent's tools.
 
@@ -18,6 +18,23 @@ Send your agent this page, with a request such as:
 
 The public skill and README do not expire. Pairing invitations expire after 30 minutes. A 404 from an invitation is not a reason to weaken verification; ask its owner for a fresh one when you are ready to pair.
 
+## Send someone a Knock
+
+After getting this repository, tell your agent:
+
+> Use `skills/knock/SKILL.md` to create a Knock connection request for Doug. Set up my connector if needed and return one nicely formatted message with the setup links, invitation, pairing code, and expiry together.
+
+With the skill installed, simply say **“Create a Knock for Doug.”** The skill's [creation flow](references/create-connection.md) handles installation, startup, and network checks before generating the request. No sender name or topic is required. A reachable endpoint is still necessary for the other agent to connect.
+
+The CLI equivalent, once the connector is running:
+
+```sh
+"$HOME/.local/share/knock/bin/knock" request --from 'Alex' --to 'Doug' \
+  --message 'Introduce our agents and start a conversation.'
+```
+
+This prints one ready-to-forward Markdown card with the review link, agent skill, pairing invitation, code, expiry, and recipient instructions. `knock request` also works with no options. `--json` provides structured output; MCP clients can call `knock_request`. The card is private because it contains both pairing credentials. The command creates the request but does not send it or enable automatic replies. `knock invite` remains available for raw invitation JSON.
+
 ## What runs on your machine
 
 | Step | Effect |
@@ -33,13 +50,12 @@ Knock supports macOS and Linux, on ARM64 and x86-64. No RentAHuman account, API 
 
 ## Install from a versioned GitHub release
 
-Download `knock-v1.1.1-release.tar.gz` and `SHA256SUMS` from the [knock-v1.1.1 release](https://github.com/rentahuman-ai/skills/releases/tag/knock-v1.1.1) using normal HTTPS. Review the tagged source, release workflow, and checksums before executing the package. Do not pipe a download into a shell.
+Download `knock-v1.1.2-release.tar.gz` and `SHA256SUMS` from the [knock-v1.1.2 release](https://github.com/rentahuman-ai/skills/releases/tag/knock-v1.1.2) using normal HTTPS. Review the tagged source, release workflow, and checksums before executing the package. Do not pipe a download into a shell.
 
 Verify the archive in the download directory:
 
 ```sh
 shasum -a 256 -c SHA256SUMS
-tar -xzf knock-v1.1.1-release.tar.gz
 ```
 
 The checksum detects a mismatched download. A checksum delivered alongside a binary does not independently prove who built it. The release page records the source tag and build workflow; see [security and provenance](references/security.md).
@@ -47,13 +63,19 @@ The checksum detects a mismatched download. A checksum delivered alongside a bin
 If GitHub CLI is available, verify the archive's build provenance before extraction or execution:
 
 ```sh
-gh attestation verify knock-v1.1.1-release.tar.gz \
+gh attestation verify knock-v1.1.2-release.tar.gz \
   --repo rentahuman-ai/skills \
   --signer-workflow rentahuman-ai/skills/.github/workflows/knock-release.yml \
-  --source-ref refs/tags/knock-v1.1.1 --deny-self-hosted-runners
+  --source-ref refs/tags/knock-v1.1.2 --deny-self-hosted-runners
 ```
 
 This verifies the producing repository, workflow, and tag. It is not an audit of the software's behavior. A failed check is a reason to investigate or build reviewed source, not to disable verification.
+
+After verification, extract the archive:
+
+```sh
+tar -xzf knock-v1.1.2-release.tar.gz
+```
 
 From the extracted directory, use the binary matching your machine:
 
@@ -90,7 +112,7 @@ Building requires Go 1.24 or newer and downloads the pinned modules in `go.mod` 
 ```sh
 git clone https://github.com/rentahuman-ai/skills.git knock-skills
 cd knock-skills
-git checkout --detach knock-v1.1.1
+git checkout --detach knock-v1.1.2
 git rev-parse HEAD
 # Review this commit, then:
 cd skills/knock/connector
@@ -128,7 +150,7 @@ KNOCK="$HOME/.local/share/knock/bin/knock"
 "$KNOCK" join 'https://PEER_IP:PORT/invite/INVITATION_ID/SKILL.md#v=1&spki=PEER_FINGERPRINT'
 ```
 
-Replace the example with the original complete invitation from your trusted contact. Enter the separately received eight-digit code at the hidden terminal prompt. Agents may leave this step to the human. Keep codes out of command arguments, URLs, environment variables, scripts, and logs. `--code-stdin` is available for permitted secret-capable tools.
+Replace the example with the original complete invitation from your trusted contact. Enter the eight-digit code from the connection request at the hidden terminal prompt. Agents may leave this step to the human. Keep codes out of command arguments, URLs, environment variables, scripts, and logs. `--code-stdin` is available for permitted secret-capable tools.
 
 `join` uses the installed connector to verify the peer's public-key pin. It does not download or install executable code from the inviting machine. The established connection carries messages in both directions.
 

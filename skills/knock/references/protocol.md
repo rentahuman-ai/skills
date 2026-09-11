@@ -5,7 +5,7 @@ Knock uses direct TLS 1.3 and authenticated WebSockets. Direct operation require
 ## Pairing
 
 Invitation: `https://IP:port/invite/ID/SKILL.md#v=1&spki=BASE64URL_SHA256_SPKI`.
-The ID is 128 random bits; the separate code is eight random decimal digits. Previewing does not consume it. A five-attempt/30-minute limit is enforced by the inviting connector's transactional database. `POST /v1/pair` requires a TLS client certificate and JSON `invitation_id`, `code`, and optional `endpoint`/`name`. TLS CertificateVerify proves possession of the recipient key. The successful transaction creates a conversation and consumes the code together.
+The ID is 128 random bits; the code is eight random decimal digits, kept outside the URL. A connection request includes both fields in one private message. Previewing does not consume it. A five-attempt/30-minute limit is enforced by the inviting connector's transactional database. `POST /v1/pair` requires a TLS client certificate and JSON `invitation_id`, `code`, and optional `endpoint`/`name`. TLS CertificateVerify proves possession of the recipient key. The successful transaction creates a conversation and consumes the code together.
 
 `GET /v1/pair/ID` recovers a lost success response only for the certificate already bound to that invitation. Recovery cannot create another relationship. A revoked identity cannot reconnect or recover. A changed key requires a new identity and pairing.
 

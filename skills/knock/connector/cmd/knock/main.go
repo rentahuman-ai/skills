@@ -175,7 +175,7 @@ func run() error {
 		if e != nil {
 			return e
 		}
-		return output(map[string]string{"installed": binary, "skill": filepath.Join(*root, "skill"), "next": "start, configure and test runtime, then join with the separate code"})
+		return output(map[string]string{"installed": binary, "skill": filepath.Join(*root, "skill"), "next": "start, confirm status, then join with the code; runtime setup is optional"})
 	case "release":
 		if len(args) != 1 {
 			return errors.New("release requires the four-binary directory")
@@ -264,6 +264,31 @@ func run() error {
 		return local(command, knock.Call{})
 	case "invite":
 		return local(command, knock.Call{})
+	case "request":
+		f := fs(command)
+		from := f.String("from", "", "sender display name")
+		to := f.String("to", "", "recipient display name")
+		message := f.String("message", "", "one-line conversation purpose")
+		asJSON := f.Bool("json", false, "return structured invitation and Markdown")
+		if e = f.Parse(args); e != nil {
+			return e
+		}
+		if f.NArg() != 0 {
+			return errors.New("request accepts --from, --to, --message, and --json")
+		}
+		data, e := knock.Control(ctx, *root, "request", knock.Call{From: *from, To: *to, Purpose: *message})
+		if e != nil {
+			return e
+		}
+		var request knock.ConnectionRequest
+		if e = json.Unmarshal(data, &request); e != nil {
+			return e
+		}
+		if *asJSON {
+			return output(request)
+		}
+		_, e = fmt.Print(request.Markdown)
+		return e
 	case "join":
 		if len(args) == 0 {
 			return errors.New("join requires the original invitation URL")
@@ -275,6 +300,13 @@ func run() error {
 			return e
 		}
 		if _, _, _, e = knock.ParseInvite(link); e != nil {
+			return e
+		}
+		// Check local readiness before asking for or reading the pairing secret.
+		probeCtx, probeCancel := context.WithTimeout(ctx, 2*time.Second)
+		_, e = knock.Control(probeCtx, *root, "status", knock.Call{})
+		probeCancel()
+		if e != nil {
 			return e
 		}
 		var code []byte
@@ -444,6 +476,7 @@ Usage: knock [--root DIRECTORY] COMMAND
   start [--foreground]   stop   status   doctor
   configure --listen IP:PORT --advertise https://IP:PORT --map-router true|false
   invite
+  request [--from NAME] [--to NAME] [--message PURPOSE] [--json]
   bridge configure --endpoint https://IP:443 --pin FINGERPRINT --public https://IP:8443
   bridge identity
   bridge serve --owner-pin FINGERPRINT [--listen :443] [--public-listen :8443]
