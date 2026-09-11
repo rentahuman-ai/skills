@@ -133,3 +133,44 @@ func TestRequestCLIFormatsWithoutSending(t *testing.T) {
 		t.Fatal("request CLI unexpectedly connected a peer")
 	}
 }
+
+func TestJoinCLIOptionOrderAndExtraArguments(t *testing.T) {
+	release := os.Getenv("KNOCK_RELEASE_DIR")
+	if release == "" {
+		t.Skip("set KNOCK_RELEASE_DIR to test the built CLI")
+	}
+	for _, order := range []string{"before", "after", "extra"} {
+		t.Run(order, func(t *testing.T) {
+			a, b := newTestDaemon(t), newTestDaemon(t)
+			invite, err := a.Invite()
+			if err != nil {
+				t.Fatal(err)
+			}
+			args := []string{"--root", b.Root, "join"}
+			if order == "before" {
+				args = append(args, "--code-stdin", invite.URL)
+			} else {
+				args = append(args, invite.URL, "--code-stdin")
+			}
+			if order == "extra" {
+				args = append(args, "unexpected")
+			}
+			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+			defer cancel()
+			cmd := exec.CommandContext(ctx, filepath.Join(release, "knock-"+runtime.GOOS+"-"+runtime.GOARCH), args...)
+			cmd.Stdin = strings.NewReader(invite.Code)
+			output, err := cmd.CombinedOutput()
+			peers, readErr := b.Store.Peers()
+			if readErr != nil {
+				t.Fatal(readErr)
+			}
+			if order == "extra" {
+				if err == nil || len(peers) != 0 || !strings.Contains(string(output), "exactly one") {
+					t.Fatal("extra argument was not rejected before pairing")
+				}
+			} else if err != nil || len(peers) != 1 || peers[0].ID != a.Identity.Pin {
+				t.Fatal("CLI did not pair with original pinned identity", err)
+			}
+		})
+	}
+}

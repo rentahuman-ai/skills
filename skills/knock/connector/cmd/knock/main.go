@@ -293,11 +293,22 @@ func run() error {
 		if len(args) == 0 {
 			return errors.New("join requires the original invitation URL")
 		}
-		link := args[0]
 		f := fs(command)
 		stdin := f.Bool("code-stdin", false, "read the pairing code from stdin, without echoing it")
-		if e = f.Parse(args[1:]); e != nil {
+		if e = f.Parse(args); e != nil {
 			return e
+		}
+		positional := f.Args()
+		if len(positional) == 0 {
+			return errors.New("join requires the original invitation URL")
+		}
+		link := positional[0]
+		// Accept options before or after the URL; keep any leading flag values.
+		if e = f.Parse(positional[1:]); e != nil {
+			return e
+		}
+		if f.NArg() != 0 {
+			return errors.New("join accepts exactly one invitation URL")
 		}
 		if _, _, _, e = knock.ParseInvite(link); e != nil {
 			return e
