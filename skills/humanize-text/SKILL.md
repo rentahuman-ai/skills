@@ -23,7 +23,7 @@ Collect:
 - optional instructions (up to 5,000 characters);
 - turnaround in whole minutes (5–10,080);
 - fixed worker pay in cents (300–100,000,000);
-- `USD` or `EUR` (default `USD`).
+- currency: `USD` only (the default).
 
 Optionally collect applicant-vetting requirements:
 
