@@ -52,7 +52,7 @@ Each step names the MCP tool to call.
 2. **Poll for applications.** `get_bounty_applications <bounty_id>`. On each tick, compare against what you've already seen. For new apps, read the applicant's profile via `get_human` and recent `get_reviews`.
 3. **Decide.** Evaluate each new applicant against the user's stated criteria (skills, rate, reviews, availability). If no clear winner yet, sleep and keep polling. If the bounty has a deadline or app cap, don't wait past it.
 4. **Accept.** `accept_application` for the winner. Optionally `reject_application` for obvious no-goes so applicants don't dangle. For multi-slot bounties, repeat until slots fill.
-5. **Coordinate.** `start_conversation` / `send_message` to brief the accepted human, share context, answer questions. Poll `get_conversation` for their replies.
+5. **Coordinate.** `send_message` in the application's conversation (`accept_application` returns its `conversationId`) to brief the accepted human, share context, answer questions. Poll `get_conversation` for their replies.
 6. **Monitor deliverable.** `get_bounty <bounty_id>` for status transitions. If the human submits work, evaluate it against the brief.
 7. **Close out.** `confirm_delivery` + `release_payment` on acceptance. If something's wrong, `open_dispute` and stop the loop — disputes need human review.
 
