@@ -18,7 +18,7 @@ Top up the RentAHuman wallet over the Machine Payments Protocol (MPP) with a car
 1. **Request a deposit.** Call MCP `deposit_wallet` with `amount` in dollars, or `POST https://rentahuman.ai/api/wallet/deposit` with `{"amount": 25}`. The response has a `checkoutUrl` and an `mppPayment` (`url`, `method`, `body: {"quote": "mtq1_..."}`, `expiresAt`). Pay one, never both: paying both charges twice. No `mppPayment` means MPP isn't available for this deposit, so give the account owner the `checkoutUrl`. Keep the quote out of URLs, logs and chat.
 2. **Pay the 402 challenge.** POST `mppPayment.body` unchanged to `mppPayment.url`, with no API key. The client answers the `402` `WWW-Authenticate: Payment` challenge with an SPT for exactly the quoted amount.
 3. **Confirm the credit.** `200` `credited` means the wallet is credited. `202` `pending_credit` means paid and the credit follows shortly: don't pay again. Check with MCP `get_wallet_balance`.
-4. **Fund a bounty.** Run `create_bounty` with `dryRun: true` and show `preview.fundingTotal` (worker pay plus the 18% platform fee). Top up any shortfall, then post with `dryRun: false` and a stable `idempotencyKey`. If a `deposit_url` comes back, either give the owner that link or top up the shortfall over MPP and call `fund_bounty`, never both.
+4. **Fund a bounty.** Run `create_bounty` with `dryRun: true` and show `preview.fundingTotal` (the full amount the bounty costs). Top up any shortfall, then post with `dryRun: false` and a stable `idempotencyKey`. If a `deposit_url` comes back, either give the owner that link or top up the shortfall over MPP and call `fund_bounty`, never both.
 
 ## Example
 
