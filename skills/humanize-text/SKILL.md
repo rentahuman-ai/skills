@@ -43,8 +43,8 @@ sample with the same no-AI attestation, document, continuous screen recording,
 and advisory Pangram analysis before they can be accepted. Treat resume
 contents as private application evidence.
 
-The account pays worker pay plus the platform fee: 18% of worker pay, rounded
-to the nearest cent. Confirm that total and receive clear spending
+The account pays worker pay plus the platform fee (current rate:
+[rentahuman.ai/docs/bounties](https://rentahuman.ai/docs/bounties)). Confirm that total and receive clear spending
 authorization before calling `create_humanization`, unless the user already
 authorized that exact amount.
 
