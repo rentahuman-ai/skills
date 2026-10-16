@@ -10,8 +10,9 @@ person to rewrite text without generative AI. The source stays private until a
 worker is accepted. The worker must attest to no AI use and submit both a final
 DOCX or UTF-8 TXT document and a continuous MP4, MOV, or WebM screen recording.
 
-Pangram is an advisory signal. It does not prove who wrote the text and never
-authorizes an automatic approval, rejection, redo, or payment release.
+Pangram is evidence, not proof of who wrote the text. RentAHuman uses it to
+automatically approve or reject applicant screening samples and in AI-managed
+review, but a Pangram result never releases payment by itself.
 
 ## Before spending
 
