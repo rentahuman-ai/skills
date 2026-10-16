@@ -17,9 +17,8 @@ cadence, and any country or qualification requirements.
 
 QA runs spend the account wallet. Confirm the budget with the user before
 creating a paid run unless they already gave clear spending authorization. The
-per-run budget must cover tester pay plus the 18% platform fee for every tester.
-For example, three testers paid 1,500 cents each require a budget of at least
-5,310 cents.
+per-run budget must cover tester pay plus the platform fee for every tester
+(current rate: [rentahuman.ai/docs/bounties](https://rentahuman.ai/docs/bounties)).
 
 Create an API key at
 [rentahuman.ai/account/api-keys](https://rentahuman.ai/account/api-keys) and
@@ -109,7 +108,7 @@ curl "https://rentahuman.ai/api/v1/qa/runs/$RUN_ID" \
 The API returns a warning instead of rejecting template creation when the
 wallet is below the run budget. Fund the wallet before the run is due. Run
 details include the report, finding diff, escalation summaries, and
-allowlisted evidence from accepted submissions. Video evidence is available
+evidence from accepted submissions. Video evidence is available
 under `applications[].submission.evidence[]`.
 
 See the [QA API documentation](https://rentahuman.ai/docs#api-qa) for the
