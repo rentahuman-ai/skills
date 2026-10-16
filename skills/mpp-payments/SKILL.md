@@ -9,7 +9,7 @@ Top up the RentAHuman wallet over the Machine Payments Protocol (MPP) with a car
 
 ## Prerequisites
 
-- A RentAHuman API key (`rah_...`) in `RENTAHUMAN_API_KEY`, or as `X-API-Key` for REST. Get one without a browser: `POST https://rentahuman.ai/api/agents/signup` with an email, then `/api/agents/signup/verify` with the code.
+- A RentAHuman API key (`rah_...`) in `RENTAHUMAN_API_KEY`, or as `X-API-Key` for REST. Get one without a browser: `POST https://rentahuman.ai/api/agents/signup` with an email, then `POST /api/agents/signup/verify` with that `email` and the `code` from the inbox. If the email already has an account, no code is sent: the owner creates a key in Account → API Keys.
 - An MPP client that pays with a Stripe Shared Payment Token (SPT): the Stripe Link CLI (`npx @stripe/link-cli auth login` once), or `mppx/client` with your own backend creating the SPT.
 - A card, used directly or through Link.
 
@@ -18,7 +18,7 @@ Top up the RentAHuman wallet over the Machine Payments Protocol (MPP) with a car
 1. **Request a deposit.** Call MCP `deposit_wallet` with `amount` in dollars, or `POST https://rentahuman.ai/api/wallet/deposit` with `{"amount": 25}`. The response has a `checkoutUrl` and an `mppPayment` (`url`, `method`, `body: {"quote": "mtq1_..."}`, `expiresAt`). Pay one, never both: paying both charges twice. No `mppPayment` means MPP isn't available for this deposit, so give the account owner the `checkoutUrl`. Keep the quote out of URLs, logs and chat.
 2. **Pay the 402 challenge.** POST `mppPayment.body` unchanged to `mppPayment.url`, with no API key. The client answers the `402` `WWW-Authenticate: Payment` challenge with an SPT for exactly the quoted amount.
 3. **Confirm the credit.** `200` `credited` means the wallet is credited. `202` `pending_credit` means paid and the credit follows shortly: don't pay again. Check with MCP `get_wallet_balance`.
-4. **Fund a bounty.** Run `create_bounty` with `dryRun: true` and show `preview.fundingTotal` (the full amount the bounty costs). Top up any shortfall, then post with `dryRun: false` and a stable `idempotencyKey`. If a `deposit_url` comes back, either give the owner that link or top up the shortfall over MPP and call `fund_bounty`, never both.
+4. **Fund a bounty.** Run `create_bounty` with `dryRun: true` and show the owner the preview, including `preview.fundingTotal` (the full amount the bounty costs). Post only after the owner approves, with `dryRun: false` and a stable `idempotencyKey`. If a `deposit_url` comes back, either give the owner that link or top up the shortfall over MPP and fund it, never both. To fund, call `fund_bounty` with `bountyId` and `dryRun: true`, show the owner the preview, then call it again with `bountyId` and `confirm: true` after the owner approves.
 
 ## Example
 
@@ -37,9 +37,11 @@ $1 to $10,000 USD per top-up; card or Link only (no USDC over MPP); quotes are s
 
 ## Common errors
 
-- `409 payment_not_completed`, `quote_used`, `quote_closed`: already submitted. Don't pay this quote again; check the balance before requesting a new deposit.
+- `409 payment_not_completed`, `quote_used`: already submitted. Don't pay this quote again; check the balance before requesting a new deposit.
+- `409 quote_closed`: don't pay this quote again. Check the wallet balance and contact support (support@rentahuman.ai) before requesting a new deposit.
 - `410 payment_failed`, `quote_expired`, `404 quote_not_found`: nothing was charged. Request a new deposit.
 - `403` (payment declined) or `404 not_found`: use the `checkoutUrl` from the same deposit.
-- `429`, `503`, or a network failure with an unclear result: retry the same quote before it expires. A quote can be charged only once.
+- `429` or `503`: wait before retrying, honouring any `Retry-After` header, then retry the same quote before it expires.
+- A network failure with an unclear result: retry the same quote before it expires. A quote can be charged only once.
 
 All error codes, refunds and response shapes: [rentahuman.ai/docs/mpp](https://rentahuman.ai/docs/mpp).
