@@ -11,7 +11,7 @@ Top up the RentAHuman wallet over the Machine Payments Protocol (MPP) with a car
 
 - A RentAHuman API key (`rah_...`) in `RENTAHUMAN_API_KEY`, or as `X-API-Key` for REST. Get one without a browser: `POST https://rentahuman.ai/api/agents/signup` with an email, then `/api/agents/signup/verify` with the code.
 - An MPP client that pays with a Stripe Shared Payment Token (SPT): the Stripe Link CLI (`npx @stripe/link-cli auth login` once), or `mppx/client` with your own backend creating the SPT.
-- A credit or debit card, used directly or through Link. Prepaid cards are refused.
+- A card, used directly or through Link.
 
 ## Steps
 
@@ -33,13 +33,13 @@ npx @stripe/link-cli mpp pay https://rentahuman.ai/api/mpp/wallet/deposit \
 
 ## Limits
 
-$1 to $10,000 USD per top-up; card or Link only (no USDC over MPP); quotes are single-use and expire after 30 minutes; no 3D Secure.
+$1 to $10,000 USD per top-up; card or Link only (no USDC over MPP); quotes are single-use and expire after 30 minutes.
 
 ## Common errors
 
 - `409 payment_not_completed`, `quote_used`, `quote_closed`: already submitted. Don't pay this quote again; check the balance before requesting a new deposit.
 - `410 payment_failed`, `quote_expired`, `404 quote_not_found`: nothing was charged. Request a new deposit.
-- `403` refusals (`card_funding_refused`, `risk_refused`, ...) or `404 not_found`: use the `checkoutUrl` from the same deposit.
+- `403` (payment declined) or `404 not_found`: use the `checkoutUrl` from the same deposit.
 - `429`, `503`, or a network failure with an unclear result: retry the same quote before it expires. A quote can be charged only once.
 
 All error codes, refunds and response shapes: [rentahuman.ai/docs/mpp](https://rentahuman.ai/docs/mpp).
