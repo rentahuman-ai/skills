@@ -1,11 +1,11 @@
 ---
-name: mpp-wallet-topup
-description: Top up a Rent A Human wallet over the Machine Payments Protocol (MPP), paying an HTTP 402 challenge with a card or Link Shared Payment Token, then use the balance to fund bounties. Trigger when the user or agent wants to "fund my RentAHuman wallet", "top up the wallet with MPP", "pay the mppPayment", "pay with Link CLI", or answer an HTTP 402 Payment challenge from `rentahuman.ai/api/mpp/wallet/deposit`, or when a bounty is `pending_deposit` and the agent should pay instead of sending the owner a checkout link. Do NOT trigger for USDC funding (that's x402, a separate early-access flow) or for writing the bounty itself (use the `bounty` skill).
+name: mpp-payments
+description: How an agent pays Rent A Human over the Machine Payments Protocol (MPP). Today that means topping up the RentAHuman wallet by paying an HTTP 402 challenge with a card or Link Shared Payment Token, then funding bounties from that balance. Trigger when the user or agent wants to "pay RentAHuman with MPP", "fund my RentAHuman wallet", "top up the wallet with MPP", "pay the mppPayment", "pay with Link CLI", or answer an HTTP 402 Payment challenge from `rentahuman.ai/api/mpp/wallet/deposit`, or when a bounty is `pending_deposit` and the agent should pay instead of sending the owner a checkout link. Do NOT trigger for USDC funding (that's x402, a separate early-access flow) or for writing the bounty itself (use the `bounty` skill).
 ---
 
-# MPP Wallet Top-up
+# MPP Payments
 
-Your agent funds its RentAHuman wallet with its own card or Link wallet, with no checkout page, then posts bounties from that balance. The wallet tools come from [`rentahuman-mcp`](https://www.npmjs.com/package/rentahuman-mcp), which ships with this plugin. Live reference: [rentahuman.ai/docs/mpp](https://rentahuman.ai/docs/mpp).
+This skill is how your agent pays RentAHuman over the Machine Payments Protocol (MPP). Today it covers topping up the RentAHuman wallet with your agent's own card or Link wallet, with no checkout page, then funding bounties from that balance. The wallet tools come from [`rentahuman-mcp`](https://www.npmjs.com/package/rentahuman-mcp), which ships with this plugin. Live reference: [rentahuman.ai/docs/mpp](https://rentahuman.ai/docs/mpp).
 
 ## Prerequisites
 
