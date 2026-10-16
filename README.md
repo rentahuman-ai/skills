@@ -30,15 +30,9 @@ Most read-only tools work anonymously. To book, rent, or post bounties you need 
 export RENTAHUMAN_API_KEY=rah_...
 ```
 
-Optional — point at a non-prod API (dev/staging):
-
-```bash
-export RENTAHUMAN_API_URL=http://localhost:3000/api
-```
-
 ## Use as a git submodule
 
-For projects that want to vendor the skills alongside source (e.g. the [rentahuman.ai](https://github.com/rentahuman-ai) monorepo):
+For projects that want to vendor the skills alongside source:
 
 ```bash
 git submodule add https://github.com/rentahuman-ai/skills rentahuman-skills

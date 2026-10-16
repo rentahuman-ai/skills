@@ -108,7 +108,7 @@ curl "https://rentahuman.ai/api/v1/qa/runs/$RUN_ID" \
 The API returns a warning instead of rejecting template creation when the
 wallet is below the run budget. Fund the wallet before the run is due. Run
 details include the report, finding diff, escalation summaries, and
-allowlisted evidence from accepted submissions. Video evidence is available
+evidence from accepted submissions. Video evidence is available
 under `applications[].submission.evidence[]`.
 
 See the [QA API documentation](https://rentahuman.ai/docs#api-qa) for the

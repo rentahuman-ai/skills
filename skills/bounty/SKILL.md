@@ -38,7 +38,7 @@ Every bounty must set ALL of these before posting:
 
 ## Application screening (`applicationDetails`)
 
-Standard application bounties support pre-acceptance screening items: `text` questions, `checkbox` acknowledgments (max 5), `file_upload` (max 3), and **one required `live_video` field** whose `label` is a script the applicant must record with the in-browser camera. Pre-recorded files are rejected server-side via camera metadata, so the recording is genuinely live.
+Standard application bounties support pre-acceptance screening items: `text` questions, `checkbox` acknowledgments (max 5), `file_upload` (max 3), and **one required `live_video` field** whose `label` is a script the applicant must record with the in-browser camera. Uploaded or pre-recorded files can't be used for this field; the applicant records it live.
 
 **Appearance-based bounties MUST include the live-video gate.** When the worker appears on camera or their appearance/presence is part of the deliverable — sign holding, UGC, sponsored posts, on-camera video, brand-ambassador or GTM/promo appearances, event staffing, modeling — always add one required `live_video` item with a label like:
 
